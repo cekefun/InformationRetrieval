@@ -3,7 +3,9 @@
 //
 
 #include "stemmer.h"
+extern "C" {
 #include "stemmer/english.h"
+}
 
 Stemmer::Stemmer() {
     enviroment = E_create_env();

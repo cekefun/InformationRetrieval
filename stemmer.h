@@ -3,7 +3,9 @@
 //
 #include <vector>
 #include <string>
+extern "C" {
 #include "stemmer/api.h"
+}
 #ifndef PROJECT_STEMMER_H
 #define PROJECT_STEMMER_H
 
