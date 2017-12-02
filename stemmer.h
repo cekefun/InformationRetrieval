@@ -12,8 +12,19 @@ extern "C" {
 
 class Stemmer {
 public:
+    /***
+     * Constructor for Stemmer
+     */
     Stemmer();
+    /***
+     * Destructor for Stemmer
+     */
     ~Stemmer();
+    /***
+     * Stem a vector of english words
+     * @input The vector containing words to stem
+     * @return The stemmed vector
+     */
     std::vector<std::string> stem(const std::vector<std::string>&);
 private:
     SN_env * enviroment;

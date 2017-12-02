@@ -1,7 +1,7 @@
 //
 // Created by cedric on 11/28/17.
 //
-
+#include <iostream>
 #include "stemmer.h"
 extern "C" {
 #include "stemmer/english.h"
@@ -20,10 +20,16 @@ std::vector<std::string> Stemmer::stem(const std::vector<std::string> &v) {
     for(std::string str : v){
         symbol* temp;
         copy(str.begin(),str.end(), temp);
-        temp[str.size()] = 0;
         SN_set_current(enviroment,str.size(),temp);
         E_stem(enviroment);
-        result.push_back(std::string(reinterpret_cast<char*>(temp)));
+        std::string stemmed="";
+        for (int j = 0; j < enviroment->l; j++){
+            stemmed.push_back(enviroment->p[j]);
+        }
+        result.push_back(stemmed);
+    }
+    // For some reason, if I remove this, I get a segfault on the return.
+    for (auto i: result){
     }
     return result;
 }
