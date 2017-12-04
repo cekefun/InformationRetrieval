@@ -1,0 +1,8 @@
+run 'make' to build the indexer(bsbi) and the printer.
+
+Running the indexer on every file in the data directory:
+    ./bsbi data/*
+This will create a new directory with all the blocks and the final 'index' and 'terms' file.
+
+To print the content of the index:
+    ./printer <directory that contains the index>
