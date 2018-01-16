@@ -1,15 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(Project)
 set(CMAKE_CXX_STANDARD 11)
-#THIS IS TO TEST IT ON CEDRICS MAIN LAPTOP
-set(EXPAT_LIBRARY "C:/Program Files (x86)/Expat 2.2.5/Bin/libexpat.dll")
-set(EXPAT_INCLUDE_DIRS "C:/Program Files (x86)/Expat 2.2.5/Source/lib")
-#-----------------------------------------
-include(FindEXPAT)
-find_package(EXPAT REQUIRED)
-include_directories(${EXPAT_INCLUDE_DIRS})
+
 set(SOURCE_STEMMER stemmer/english.c stemmer/api.c stemmer/utilities.c)
-set(SOURCE_FILES main.cpp stemmer.cpp CMyXML.cpp ExpatImpl.h)
+set(SOURCE_FILES main.cpp stemmer.cpp)
 add_executable(IRProject ${SOURCE_FILES} ${SOURCE_STEMMER})
-TARGET_LINK_LIBRARIES(IRProject ${EXPAT_LIBRARIES})
 add_executable(Snowball ${SOURCE_STEMMER} stemmer/driver.c)
