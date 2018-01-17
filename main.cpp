@@ -3,7 +3,6 @@
 #include <vector>
 #include "stemmer.h"
 #include "SPIMI.h"
-#include "Markup/Markup.h"
 
 Stemmer stemmer;
 SPIMI spimi;
@@ -35,24 +34,7 @@ int main() {
     //"../Wikipedia/enwiki-20170820-pages-articles.xml"
     stemmer = Stemmer();
     spimi = SPIMI();
-    CMarkup WikiReader;
-    bool loadsucces = WikiReader.Load("../tempSet.xml");
-    if(!loadsucces){
-        std::cout<<"FILE NOT FOUND"<<std::endl;
-        return -1;
-    }
-    WikiReader.FindElem();
-    WikiReader.IntoElem();
-    while(WikiReader.FindElem("page")) {
-        WikiReader.IntoElem();
-        WikiReader.FindElem("revision");
-        WikiReader.IntoElem();
-        WikiReader.FindElem("text");
-        std::string info = WikiReader.GetData();
-        handleFile(info);
-        WikiReader.OutOfElem();
-        WikiReader.OutOfElem();
-    }
+
 
 //    sp.finish();
     return 0;
