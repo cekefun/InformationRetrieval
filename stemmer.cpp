@@ -18,10 +18,13 @@ Stemmer::~Stemmer() {
 std::vector<std::string> Stemmer::stem(const std::vector<std::string> &v) {
     std::vector<std::string> result;
     for(std::string str : v){
-        symbol* temp;
+        std::cout<<"token: "<<str<<std::endl;
+        symbol temp[str.size()];
         copy(str.begin(),str.end(), temp);
+
         SN_set_current(enviroment,str.size(),temp);
         E_stem(enviroment);
+        std::cout<<"stemmed"<<std::endl;
         std::string stemmed="";
         for (int j = 0; j < enviroment->l; j++){
             stemmed.push_back(enviroment->p[j]);
