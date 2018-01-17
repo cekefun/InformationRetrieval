@@ -12,21 +12,30 @@
 
 class SPIMI {
 public:
-    SPIMI(std::string dir="");
+    SPIMI(std::string dir = "");
+
     void addFile(std::vector<std::string>);
+
     void finish();
+
     void print();
 
-    void flush(std::string);
-    bool load(std::string,std::map<std::string,std::set<uint32_t >>&);
-
 private:
-    uint32_t docId =0;
+    uint32_t docId = 0;
     uint32_t nextFile = 1;
     std::map<std::string, std::set<uint32_t >> dict;
     std::string directoryname;
+    // GIVE A BETTER VALUE
+    uint32_t maxValue = 1048576;
 
-    uint32_t maxValue = 1073741824;
+    void combine(uint32_t, uint32_t, bool);
+
+    void actual_combine(uint32_t, uint32_t, bool);
+
+    void flush(std::string);
+
+    bool load(std::string, std::map<std::string, std::set<uint32_t >> &);
+
 };
 
 
