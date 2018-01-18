@@ -11,7 +11,8 @@ int main() {
         return -1;
     }
 
-    FILE *fp = fopen("../tempSet.xml","r");
+    //FILE *fp = fopen("../tempSet.xml","r");
+    FILE *fp = fopen("../Wikipedia/enwiki-20170820-pages-articles.xml","r");
     if(fp == NULL){
         std::cout <<"FAILED TO OPEN THE FILE"<<std::endl;
         return -1;

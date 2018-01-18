@@ -7,9 +7,8 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
-
+#include <stdlib.h>
 #include <windows.h>
-#define SYSERROR() GetLastError()
 
 SPIMI::SPIMI(std::string dir): directoryname(dir) {}
 
@@ -17,7 +16,7 @@ void SPIMI::addFile(std::vector<std::string> f) {
     for(auto& i: f){
         dict[i].insert(docId);
     }
-    if (sizeof(dict) > maxValue){
+    if (size() > maxValue){
         flush("SPIMI"+std::to_string(nextFile)+"_1");
         nextFile++;
     }
@@ -41,7 +40,7 @@ void SPIMI::flush(std::string filename) {
 
 
 
-bool SPIMI::load(std::string id, std::map<std::string,std::set<uint32_t >>& target) {
+bool SPIMI::load(std::string id, std::map<std::string,std::set<unsigned int >>& target) {
     target.clear();
 
     std::ifstream ifs;
@@ -51,7 +50,7 @@ bool SPIMI::load(std::string id, std::map<std::string,std::set<uint32_t >>& targ
     }
     std::string s;
     while (getline(ifs, s)) {
-        std::set<uint32_t > values;
+        std::set<unsigned int > values;
         std::istringstream f(s);
         std::string s2;
         std::string word;
@@ -91,7 +90,7 @@ void SPIMI::print() {
     }
 }
 
-void SPIMI::combine(uint32_t first, uint32_t second, bool nameFirst) {
+void SPIMI::combine(unsigned int first, unsigned int second, bool nameFirst) {
     if (first + 1 < second) {
         int length = second - first;
         combine(first, first + length / 2, true);
@@ -105,7 +104,7 @@ void SPIMI::combine(uint32_t first, uint32_t second, bool nameFirst) {
 
 // This is so to minimize the amount of addresses will be allocated in during the recursive part
 // Combines 2 disk indices to 1 disk index
-void SPIMI::actual_combine(uint32_t first, uint32_t second, bool nameFirst) {
+void SPIMI::actual_combine(unsigned int first, unsigned int second, bool nameFirst) {
     unsigned int length = 1;
     std::string filename1 = "SPIMI"+std::to_string(first);
     std::string filename2 = "SPIMI"+std::to_string(second);
@@ -116,13 +115,13 @@ void SPIMI::actual_combine(uint32_t first, uint32_t second, bool nameFirst) {
     else {
         fileResult = filename2;
     }
-    uint32_t n1 = 1;
-    uint32_t n2 = 1;
-    std::map<std::string,std::set<uint32_t >> dict1;
-    std::map<std::string,std::set<uint32_t >> dict2;
+    unsigned int n1 = 1;
+    unsigned int n2 = 1;
+    std::map<std::string,std::set<unsigned int >> dict1;
+    std::map<std::string,std::set<unsigned int >> dict2;
 
-    std::map<std::string,std::set<uint32_t >>::iterator it1;
-    std::map<std::string,std::set<uint32_t >>::iterator it2;
+    std::map<std::string,std::set<unsigned int >>::iterator it1;
+    std::map<std::string,std::set<unsigned int >>::iterator it2;
 
     bool succes1 = false;
     bool succes2 = false;
@@ -169,7 +168,7 @@ void SPIMI::actual_combine(uint32_t first, uint32_t second, bool nameFirst) {
                 it2++;
             }
 
-            if(sizeof(dict)>maxValue){
+            if(size()>maxValue){
                 flush("SPIMITEMP_" + std::to_string(length));
                 length ++;
             }
@@ -183,4 +182,11 @@ void SPIMI::actual_combine(uint32_t first, uint32_t second, bool nameFirst) {
     for(unsigned int temp = 1; temp < length; temp++){
         std::rename(("SPIMITEMP_"+std::to_string(temp)).data(),(fileResult+"_"+std::to_string(temp)).data());
     }
+}
+unsigned int SPIMI::size() {
+    unsigned int result = 0;
+    for(auto tuple = dict.begin(); tuple != dict.end(); tuple++){
+        result += tuple->first.size() + tuple->second.size();
+    }
+    return result;
 }
