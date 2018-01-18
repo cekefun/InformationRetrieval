@@ -5,7 +5,7 @@
 
 int main() {
     //"../Wikipedia/enwiki-20170820-pages-articles.xml"
-    Parser myParser = Parser();
+    Parser myParser;
     if(!myParser.Create()){
         std::cout<<"FAILED TO CREATE PARSER"<<std::endl;
         return -1;

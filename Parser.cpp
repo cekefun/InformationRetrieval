@@ -7,7 +7,6 @@
 #include <cstring>
 
 Parser::Parser() {
-    stemmer = Stemmer();
     spimi = SPIMI();
 }
 
@@ -62,19 +61,11 @@ void Parser::handleFile(){
     }
     //free memory
     currentFile.clear();
-//    std::cout<<"TOKENS: "<<std::endl;
-//    for(auto i: Tokens){
-//        std::cout<<i<<std::endl;
-//    }
-//    std::cout<<std::endl;
-//
-//
-//    std::vector<std::string> stemmed;
-//    std::cout<<"stemming"<<std::endl;
-//    stemmed = stemmer.stem(Tokens);
 
-    //std::cout<<"ADDING FILE"<<std::endl;
-    spimi.addFile(Tokens);
+    std::vector<std::string> stemmed;
+    stemmed = stemmer.stem(Tokens);
+    Tokens.clear();
+    spimi.addFile(stemmed);
 }
 
 void Parser::finishSPIMI() {
