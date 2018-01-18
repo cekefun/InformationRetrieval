@@ -1,41 +1,39 @@
 #include <iostream>
-#include <cstring>
-#include <vector>
-#include "stemmer.h"
-#include "SPIMI.h"
+#include <winnt.h>
+#include "Parser.h"
 
-Stemmer stemmer;
-SPIMI spimi;
-
-
-void handleFile(std::string& filestring){
-    std::cout<<"tokenizing"<<std::endl;
-    char* pch = std::strtok(&filestring[0u]," .,!?@#$%^&*_-`~+=:;|<>'\"(){}[]\\/");
-    std::vector<std::string> Tokens;
-    while(pch != NULL){
-        std::string word = pch;
-        for(int i =0; i < word.size(); ++i){
-            word[i] = tolower(word[i]);
-        }
-        Tokens.push_back(word);
-        pch = strtok(NULL," .,'");
-    }
-    //free memory
-    filestring.clear();
-    std::vector<std::string> stemmed;
-    std::cout<<"stemming"<<std::endl;
-    stemmed = stemmer.stem(Tokens);
-
-    std::cout<<"ADDING FILE"<<std::endl;
-    spimi.addFile(stemmed);
-}
 
 int main() {
     //"../Wikipedia/enwiki-20170820-pages-articles.xml"
-    stemmer = Stemmer();
-    spimi = SPIMI();
+    Parser myParser = Parser();
+    if(!myParser.Create()){
+        std::cout<<"FAILED TO CREATE PARSER"<<std::endl;
+        return -1;
+    }
 
+    FILE *fp = fopen("../tempSet.xml","r");
+    if(fp == NULL){
+        std::cout <<"FAILED TO OPEN THE FILE"<<std::endl;
+        return -1;
+    }
 
+    bool fSuccess = true;
+    while (!feof (fp) && fSuccess)
+    {
+        LPSTR pszBuffer = (LPSTR) myParser .GetBuffer (256); // REQUEST
+        if (pszBuffer == NULL)
+            fSuccess = false;
+        else
+        {
+            int nLength = fread (pszBuffer, 1, 256, fp); // READ
+            fSuccess = myParser .ParseBuffer (nLength, nLength == 0); // PARSE
+        }
+    }
+    myParser.finishSPIMI();
+    // Close the file
+
+    fclose (fp);
+    return fSuccess;
 //    sp.finish();
     return 0;
 }

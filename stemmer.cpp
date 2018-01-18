@@ -16,7 +16,7 @@ Stemmer::~Stemmer() {
 }
 
 std::vector<std::string> Stemmer::stem(const std::vector<std::string> &v) {
-    std::vector<std::string> result;
+    std::vector<std::string> result = {};
     for(std::string str : v){
         std::cout<<"token: "<<str<<std::endl;
         symbol temp[str.size()];
@@ -24,12 +24,10 @@ std::vector<std::string> Stemmer::stem(const std::vector<std::string> &v) {
 
         SN_set_current(enviroment,str.size(),temp);
         E_stem(enviroment);
-        std::cout<<"stemmed"<<std::endl;
-        std::string stemmed="";
-        for (int j = 0; j < enviroment->l; j++){
-            stemmed.push_back(enviroment->p[j]);
-        }
+        std::string stemmed((char*)enviroment->p,enviroment->l);
+        std::cout<<"stemmed word: "<<stemmed<<std::endl;
         result.push_back(stemmed);
+        std::cout<<"pushed"<<std::endl;
     }
     // For some reason, if I remove this, I get a segfault on the return.
     for (auto i: result){
