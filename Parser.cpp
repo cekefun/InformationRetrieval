@@ -3,8 +3,6 @@
 //
 
 #include "Parser.h"
-#include <iostream>
-#include <cstring>
 
 Parser::Parser() {
     spimi = SPIMI();
@@ -55,7 +53,9 @@ void Parser::handleFile(){
     while(pch != NULL){
         std::string word = pch;
         if(!word.empty()){
-            Tokens.push_back(word);
+            if(stopwords[word]){
+                Tokens.push_back(word);
+            }
         }
         pch = strtok(NULL," ");
     }

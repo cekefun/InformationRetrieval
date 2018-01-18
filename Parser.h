@@ -5,6 +5,7 @@
 #include "expath/ExpatImpl.h"
 #include "stemmer.h"
 #include "SPIMI.h"
+#include "StopWords.h"
 
 #ifndef PROJECT_PARSER_H
 #define PROJECT_PARSER_H
@@ -29,6 +30,7 @@ private:
     SPIMI spimi;
     bool InText = false;
     std::string currentFile;
+    StopWords stopwords;
 
     void handleFile();
 };
