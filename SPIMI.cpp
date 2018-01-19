@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <cstring>
 #include <stdlib.h>
 
 SPIMI::SPIMI(std::string dir): directoryname(dir) {}

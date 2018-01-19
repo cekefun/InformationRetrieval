@@ -2,10 +2,21 @@
 // Created by cekef on 18-Jan-18.
 //
 
+#include <sstream>
+
 #include "Parser.h"
 
-Parser::Parser() {
-    spimi = SPIMI();
+#include "BSBI/bsbi.h"
+
+Parser::Parser(bool useBSBI)
+    : useBSBI(useBSBI)
+{
+    if(!useBSBI) {
+         spimi = SPIMI();
+    } else {
+         enableBSBI();
+    }
+    currentDocumentId = 0;
 }
 
 void Parser::OnPostCreate() {
@@ -39,6 +50,7 @@ void Parser::OnCharacterData(const XML_Char *pszData, int nLength) {
 }
 
 void Parser::handleFile(){
+    currentDocumentId++;
 
     for(int i =0; i < currentFile.size(); i++){
         if(isalpha(currentFile[i])){
@@ -65,9 +77,22 @@ void Parser::handleFile(){
     std::vector<std::string> stemmed;
     stemmed = stemmer.stem(Tokens);
     Tokens.clear();
-    spimi.addFile(stemmed);
+    
+    if(!useBSBI) {
+        spimi.addFile(stemmed);
+    } else {
+        std::stringstream ss;
+        for(auto& s : stemmed) {
+            ss << s << " ";
+        }
+        indexDocument(currentDocumentId, ss);
+    }
 }
 
-void Parser::finishSPIMI() {
-    spimi.finish();
+void Parser::finish() {
+    if(!useBSBI) {
+        spimi.finish();
+    } else {
+        finalizeBSBI();
+    }
 }

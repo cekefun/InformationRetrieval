@@ -36,12 +36,12 @@ struct TDRecord
   uint32_t docId;
 };
 
-const size_t BLOCK_SIZE = 64;
+const size_t BLOCK_SIZE = 1024*1024;
 const size_t TD_RECORDS_PER_BLOCK = BLOCK_SIZE / sizeof(TDRecord);
 
 std::map<std::string, uint32_t> terms;
 
-bool getToken(std::ifstream& ifs, std::string& token)
+bool getToken(std::istream& ifs, std::string& token)
 {
   std::string tmp;
   if(!ifs.good()) {
@@ -185,7 +185,7 @@ void freeBlock(Block& block)
 }
 
 
-bool parseNextBlock(Block& block, uint32_t docId, std::ifstream& ifs)
+bool parseNextBlock(Block& block, uint32_t docId, std::istream& ifs)
 {
   std::string token;
   while(true) {
@@ -282,7 +282,10 @@ void mergeBlocks(size_t last)
   mergedBlocks.close();
 }
 
-int main(int argc, char* argv[])
+size_t blockCounter;
+Block block;
+
+void enableBSBI()
 {
   std::cout << "STATISTICS" << std::endl;
   std::cout << "----------" << std::endl;
@@ -293,17 +296,14 @@ int main(int argc, char* argv[])
   directoryName = getDateTime();
   mkdir(directoryName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
-  Block block;
   allocateBlock(block);
+  blockCounter = 0;
+}
 
-  size_t blockCounter = 0;
-  for(size_t i = 1; i < argc; i++) {
-    std::cout << "Parsing files '" << argv[i] << "'." << std::endl;
-    std::ifstream ifs;
-    ifs.open(argv[i], std::ifstream::in);
-
-    while(ifs.good()) {
-      if(!parseNextBlock(block, i, ifs)) {
+void indexDocument(unsigned int docId, std::istream& terms)
+{
+    while(terms.good()) {
+      if(!parseNextBlock(block, docId, terms)) {
 
         block.sort();
         block.toDisk(blockCounter);
@@ -311,11 +311,10 @@ int main(int argc, char* argv[])
         blockCounter++;
       }
     }
+}
 
-
-    ifs.close();
-  }
-
+void finalizeBSBI()
+{
   block.sort();
   block.toDisk(blockCounter);
   blockCounter++;

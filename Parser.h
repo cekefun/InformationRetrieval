@@ -13,7 +13,7 @@
 
 class Parser: public CExpatImpl<Parser> {
 public:
-    Parser();
+    Parser(bool useBSBI=false);
 
     void OnPostCreate();
 
@@ -23,7 +23,7 @@ public:
 
     void OnCharacterData(const XML_Char *pszData, int nLength);
 
-    void finishSPIMI();
+    void finish();
 
 private:
     Stemmer stemmer;
@@ -31,6 +31,8 @@ private:
     bool InText = false;
     std::string currentFile;
     StopWords stopwords;
+    unsigned int currentDocumentId;
+    bool useBSBI;
 
     void handleFile();
 };
