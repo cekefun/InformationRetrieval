@@ -13,7 +13,7 @@
 
 class Parser: public CExpatImpl<Parser> {
 public:
-    Parser(bool useBSBI=false);
+    Parser();
 
     void OnPostCreate();
 
@@ -32,7 +32,6 @@ private:
     std::string currentFile;
     StopWords stopwords;
     unsigned int currentDocumentId;
-    bool useBSBI;
 
     void handleFile();
 };

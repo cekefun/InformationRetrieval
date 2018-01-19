@@ -13,6 +13,10 @@
 #include <ctime>
 #include <sys/types.h>
 #include <sys/stat.h>
+#if _WIN32
+#include <windows.h>
+
+#endif
 
 std::string directoryName;
 
@@ -21,7 +25,7 @@ const std::string getDateTime()
   time_t now = time(0);
   tm tstruct = *localtime(&now);
   char buf[128];
-  strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+  strftime(buf, sizeof(buf), "%Y-%m-%d.%H-%M-%S", &tstruct);
   return buf;
 }
 
@@ -294,7 +298,12 @@ void enableBSBI()
   std::cout << "---------" << std::endl;
 
   directoryName = getDateTime();
-  mkdir(directoryName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#ifdef _WIN32
+    CreateDirectory(directoryName.c_str(),NULL);
+
+#elif __linux__
+    mkdir(directoryName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#endif
 
   allocateBlock(block);
   blockCounter = 0;

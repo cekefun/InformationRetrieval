@@ -8,14 +8,13 @@
 
 #include "BSBI/bsbi.h"
 
-Parser::Parser(bool useBSBI)
-    : useBSBI(useBSBI)
+Parser::Parser()
 {
-    if(!useBSBI) {
+#ifdef USESPIMI
          spimi = SPIMI();
-    } else {
+#else
          enableBSBI();
-    }
+#endif
     currentDocumentId = 0;
 }
 
@@ -78,21 +77,21 @@ void Parser::handleFile(){
     stemmed = stemmer.stem(Tokens);
     Tokens.clear();
     
-    if(!useBSBI) {
-        spimi.addFile(stemmed);
-    } else {
-        std::stringstream ss;
-        for(auto& s : stemmed) {
-            ss << s << " ";
-        }
-        indexDocument(currentDocumentId, ss);
+#ifdef  USESPIMI
+    spimi.addFile(stemmed);
+#else
+    std::stringstream ss;
+    for(auto& s : stemmed) {
+        ss << s << " ";
     }
+    indexDocument(currentDocumentId, ss);
+#endif
 }
 
 void Parser::finish() {
-    if(!useBSBI) {
+#if USESPIMI
         spimi.finish();
-    } else {
+#else
         finalizeBSBI();
-    }
+#endif
 }

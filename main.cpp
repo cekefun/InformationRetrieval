@@ -8,15 +8,8 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    bool useBSBI = false;
-    if(argc > 2) {
-        if(argv[2][0] == '1') {
-            useBSBI = true;
-        }
-    }
-
     //"../Wikipedia/enwiki-20170820-pages-articles.xml"
-    Parser myParser(useBSBI);
+    Parser myParser;
     if(!myParser.Create()){
         std::cout<<"FAILED TO CREATE PARSER"<<std::endl;
         return -1;
@@ -47,7 +40,6 @@ int main(int argc, char* argv[]) {
     fclose (fp);
     return fSuccess;
 //    sp.finish();
-    return 0;
 }
 
 
