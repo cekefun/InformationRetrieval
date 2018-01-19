@@ -658,7 +658,7 @@ protected:
 
 	// @cmember Start element handler wrapper
 
-	static void __cdecl StartElementHandler (void *pUserData,
+	static void StartElementHandler (void *pUserData,
 		const XML_Char *pszName, const XML_Char **papszAttrs)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
@@ -667,7 +667,7 @@ protected:
 
 	// @cmember End element handler wrapper
 
-	static void __cdecl EndElementHandler (void *pUserData,
+	static void EndElementHandler (void *pUserData,
 		const XML_Char *pszName)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
@@ -676,7 +676,7 @@ protected:
 
 	// @cmember Character data handler wrapper
 
-	static void __cdecl CharacterDataHandler (void *pUserData,
+	static void CharacterDataHandler (void *pUserData,
 		const XML_Char *pszData, int nLength)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
@@ -685,7 +685,7 @@ protected:
 
 	// @cmember Processing instruction handler wrapper
 
-	static void __cdecl ProcessingInstructionHandler (void *pUserData,
+	static void ProcessingInstructionHandler (void *pUserData,
 		const XML_Char *pszTarget, const XML_Char *pszData)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
@@ -694,7 +694,7 @@ protected:
 
 	// @cmember Comment handler wrapper
 
-	static void __cdecl CommentHandler (void *pUserData,
+	static void CommentHandler (void *pUserData,
 		const XML_Char *pszData)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
@@ -703,7 +703,7 @@ protected:
 
 	// @cmember Start CDATA section wrapper
 
-	static void __cdecl StartCdataSectionHandler (void *pUserData)
+	static void StartCdataSectionHandler (void *pUserData)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
 		pThis ->OnStartCdataSection ();
@@ -711,62 +711,62 @@ protected:
 
 	// @cmember End CDATA section wrapper
 
-	static void __cdecl EndCdataSectionHandler (void *pUserData)
+	static void EndCdataSectionHandler (void *pUserData)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
 		pThis ->OnEndCdataSection ();
 	}
 
 	// @cmember Default wrapper
-	
-	static void __cdecl DefaultHandler (void *pUserData, 
+
+	static void DefaultHandler (void *pUserData,
 		const XML_Char *pszData, int nLength)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
 		pThis ->OnDefault (pszData, nLength);
 	}
-	
+
 	// @cmember External entity ref wrapper
-	
-	static int __cdecl ExternalEntityRefHandler (void *pUserData, 
-		const XML_Char *pszContext, const XML_Char *pszBase, 
+
+	static int ExternalEntityRefHandler (void *pUserData,
+		const XML_Char *pszContext, const XML_Char *pszBase,
 		const XML_Char *pszSystemID, const XML_Char *pszPublicID)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
-		return pThis ->OnExternalEntityRef (pszContext, 
+		return pThis ->OnExternalEntityRef (pszContext,
 			pszBase, pszSystemID, pszPublicID) ? 1 : 0;
 	}
-	
+
 	// @cmember Unknown encoding wrapper
-	
-	static int __cdecl UnknownEncodingHandler (void *pUserData, 
+
+	static int UnknownEncodingHandler (void *pUserData,
 		const XML_Char *pszName, XML_Encoding *pInfo)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
 		return pThis ->OnUnknownEncoding (pszName, pInfo) ? 1 : 0;
 	}
-	
+
 	// @cmember Start namespace decl wrapper
-	
-	static void __cdecl StartNamespaceDeclHandler (void *pUserData, 
+
+	static void StartNamespaceDeclHandler (void *pUserData,
 		const XML_Char *pszPrefix, const XML_Char *pszURI)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
 		pThis ->OnStartNamespaceDecl (pszPrefix, pszURI);
 	}
-	
+
 	// @cmember End namespace decl wrapper
-	
-	static void __cdecl EndNamespaceDeclHandler (void *pUserData, 
+
+	static void EndNamespaceDeclHandler (void *pUserData,
 		const XML_Char *pszPrefix)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
 		pThis ->OnEndNamespaceDecl (pszPrefix);
 	}
-	
+
 	// @cmember XML declaration wrapper
 
-	static void __cdecl XmlDeclHandler (void *pUserData,
+	static void XmlDeclHandler (void *pUserData,
 		const XML_Char *pszVersion, const XML_Char *pszEncoding,
 		int nStandalone)
 	{
@@ -776,18 +776,18 @@ protected:
 
 	// @cmember Start Doctype declaration wrapper
 
-	static void __cdecl StartDoctypeDeclHandler (void *pUserData,
-		const XML_Char *pszDoctypeName, const XML_Char *pszSysID, 
+	static void StartDoctypeDeclHandler (void *pUserData,
+		const XML_Char *pszDoctypeName, const XML_Char *pszSysID,
 		const XML_Char *pszPubID, int nHasInternalSubset)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
-		pThis ->OnStartDoctypeDecl (pszDoctypeName, pszSysID, 
+		pThis ->OnStartDoctypeDecl (pszDoctypeName, pszSysID,
 			pszPubID, nHasInternalSubset != 0);
 	}
 
 	// @cmember End Doctype declaration wrapper
 
-	static void __cdecl EndDoctypeDeclHandler (void *pUserData)
+	static void EndDoctypeDeclHandler (void *pUserData)
 	{
 		_T *pThis = static_cast <_T *> ((CExpatImpl <_T> *) pUserData);
 		pThis ->OnEndDoctypeDecl ();
