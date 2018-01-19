@@ -7,6 +7,11 @@
 #include <map>
 #include <set>
 
+#if _WIN32
+#include <windows.h>
+#include <psapi.h>
+#endif
+
 #ifndef PROJECT_SPIMI_H
 #define PROJECT_SPIMI_H
 
@@ -27,7 +32,10 @@ private:
     std::map<std::string, std::set<unsigned int >> dict;
     std::string directoryname;
     // GIVE A BETTER VALUE
-    unsigned int maxValue = 1048576;
+    unsigned int maxValue = 1073741824; // 1 GB
+#if _WIN32
+    PROCESS_MEMORY_COUNTERS pmc;
+#endif
 
     void combine(unsigned int, unsigned int, bool);
 
@@ -40,6 +48,8 @@ private:
     unsigned int size();
 
 };
-
+#ifdef __linux__
+int parseLine(char*);
+#endif
 
 #endif //PROJECT_SPIMI_H

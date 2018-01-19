@@ -8,7 +8,6 @@
 #include <sstream>
 #include <cmath>
 #include <stdlib.h>
-#include <windows.h>
 
 SPIMI::SPIMI(std::string dir): directoryname(dir) {}
 
@@ -24,6 +23,7 @@ void SPIMI::addFile(std::vector<std::string> f) {
 }
 
 void SPIMI::flush(std::string filename) {
+    std::cout<<"FLUSH TO "<<filename<<std::endl;
     std::ofstream ofs;
     ofs.open(directoryname+filename);
     for(auto i: dict) {
@@ -168,7 +168,7 @@ void SPIMI::actual_combine(unsigned int first, unsigned int second, bool nameFir
                 it2++;
             }
 
-            if(size()>maxValue){
+            if(size()> 3*maxValue){
                 flush("SPIMITEMP_" + std::to_string(length));
                 length ++;
             }
@@ -184,9 +184,34 @@ void SPIMI::actual_combine(unsigned int first, unsigned int second, bool nameFir
     }
 }
 unsigned int SPIMI::size() {
-    unsigned int result = 0;
-    for(auto tuple = dict.begin(); tuple != dict.end(); tuple++){
-        result += tuple->first.size() + tuple->second.size();
+#ifdef _WIN32
+    GetProcessMemoryInfo(GetCurrentProcess(),&pmc,sizeof(pmc));
+    return pmc.WorkingSetSize;
+#elif __linux__
+    FILE* file = fopen("/proc/self/status", "r");
+    int result = -1;
+    char line[128];
+
+    while (fgets(line, 128, file) != NULL){
+        if (strncmp(line, "VmSize:", 7) == 0){
+            result = parseLine(line);
+            break;
+        }
     }
+    fclose(file);
     return result;
+#endif
+    return 0;
 }
+
+#ifdef __linux__
+int parseLine(char* line){
+    // This assumes that a digit will be found and the line ends in " Kb".
+    int i = strlen(line);
+    const char* p = line;
+    while (*p <'0' || *p > '9') p++;
+    line[i-3] = '\0';
+    i = atoi(p);
+    return i;
+}
+#endif
