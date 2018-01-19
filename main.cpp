@@ -7,9 +7,12 @@ int main(int argc, char* argv[]) {
         std::cout << "Please give a filename" << std::endl;
         return -1;
     }
-
+    int i = -1;
+    if(argc > 2){
+        i = std::atoi(argv[2]);
+    }
     //"../Wikipedia/enwiki-20170820-pages-articles.xml"
-    Parser myParser;
+    Parser myParser(i);
     if(!myParser.Create()){
         std::cout<<"FAILED TO CREATE PARSER"<<std::endl;
         return -1;
@@ -23,7 +26,7 @@ int main(int argc, char* argv[]) {
     }
 
     bool fSuccess = true;
-    while (!feof (fp) && fSuccess)
+    while (!feof (fp) && fSuccess && myParser.keepGoing())
     {
         char* pszBuffer = (char*) myParser .GetBuffer (256); // REQUEST
         if (pszBuffer == NULL)

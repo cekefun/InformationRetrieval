@@ -8,7 +8,8 @@
 
 #include "BSBI/bsbi.h"
 
-Parser::Parser()
+Parser::Parser(unsigned int amount_of_documents):
+        maxDocuments(amount_of_documents)
 {
 #ifdef USESPIMI
          spimi = SPIMI();
@@ -94,4 +95,8 @@ void Parser::finish() {
 #else
         finalizeBSBI();
 #endif
+}
+
+bool Parser::keepGoing(){
+    return currentDocumentId < maxDocuments;
 }

@@ -13,7 +13,7 @@
 
 class Parser: public CExpatImpl<Parser> {
 public:
-    Parser();
+    Parser(unsigned int amount_of_documents = -1);
 
     void OnPostCreate();
 
@@ -25,6 +25,8 @@ public:
 
     void finish();
 
+    bool keepGoing();
+
 private:
     Stemmer stemmer;
     SPIMI spimi;
@@ -32,6 +34,7 @@ private:
     std::string currentFile;
     StopWords stopwords;
     unsigned int currentDocumentId;
+    unsigned int maxDocuments;
 
     void handleFile();
 };
