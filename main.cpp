@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
     // Close the file
 
     fclose (fp);
+    myParser.printStats();
     return fSuccess;
 //    sp.finish();
 }

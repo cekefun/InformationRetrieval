@@ -8,6 +8,16 @@
 
 #include "BSBI/bsbi.h"
 
+#if _WIN32
+#include <windows.h>
+#include <psapi.h>
+#endif
+#if __linux__
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/resource.h>
+#endif
+
 Parser::Parser(unsigned int amount_of_documents):
         maxDocuments(amount_of_documents)
 {
@@ -24,6 +34,8 @@ void Parser::OnPostCreate() {
     EnableEndElementHandler ();
     // Note: EnableElementHandler will do both start and end
     EnableCharacterDataHandler ();
+    start = std::clock();
+
 }
 
 void Parser::OnStartElement(const XML_Char *tagname, const XML_Char **) {
@@ -95,8 +107,23 @@ void Parser::finish() {
 #else
         finalizeBSBI();
 #endif
+    end = std::clock();
 }
 
 bool Parser::keepGoing(){
     return currentDocumentId < maxDocuments;
+}
+
+void Parser::printStats() {
+    std::cout<<"files: "<<currentDocumentId<<std::endl;
+#if _WIN32
+    PROCESS_MEMORY_COUNTERS info;
+    GetProcessMemoryInfo( GetCurrentProcess( ), &info, sizeof(info) );
+    std::cout<<"Peak_RAM_usage(B): " << info.PeakWorkingSetSize<<std::endl;
+#elif __linux__
+    struct rusage rusage;
+    getrusage( RUSAGE_SELF, &rusage );
+    std::cout<<"Peak_RAM_usage(B): " << rusage.ru_maxrss * 1024L <<std::endl;
+#endif
+    std::cout<<"CPUTIME(ms): "<<1000.0 * (end-start) / CLOCKS_PER_SEC<<std::endl;
 }

@@ -2,6 +2,7 @@
 // Created by cekef on 18-Jan-18.
 //
 
+#include <ctime>
 #include "expath/ExpatImpl.h"
 #include "stemmer.h"
 #include "SPIMI.h"
@@ -27,6 +28,8 @@ public:
 
     bool keepGoing();
 
+    void printStats();
+
 private:
     Stemmer stemmer;
     SPIMI spimi;
@@ -35,6 +38,8 @@ private:
     StopWords stopwords;
     unsigned int currentDocumentId;
     unsigned int maxDocuments;
+    std::clock_t start;
+    std::clock_t end;
 
     void handleFile();
 };

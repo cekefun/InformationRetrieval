@@ -291,11 +291,11 @@ Block block;
 
 void enableBSBI()
 {
-  std::cout << "STATISTICS" << std::endl;
-  std::cout << "----------" << std::endl;
-  std::cout << "BLOCK SIZE: " << BLOCK_SIZE << " bytes." << std::endl;
-  std::cout << "# OF PAIRS PER BLOCK: " << TD_RECORDS_PER_BLOCK << "." << std::endl;
-  std::cout << "---------" << std::endl;
+//  std::cout << "STATISTICS" << std::endl;
+//  std::cout << "----------" << std::endl;
+//  std::cout << "BLOCK SIZE: " << BLOCK_SIZE << " bytes." << std::endl;
+//  std::cout << "# OF PAIRS PER BLOCK: " << TD_RECORDS_PER_BLOCK << "." << std::endl;
+//  std::cout << "---------" << std::endl;
 
   directoryName = getDateTime();
 #ifdef _WIN32

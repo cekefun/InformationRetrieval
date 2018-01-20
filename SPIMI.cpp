@@ -29,7 +29,6 @@ void SPIMI::addFile(std::vector<std::string> f) {
 }
 
 void SPIMI::flush(std::string filename) {
-    std::cout<<"FLUSH TO "<<filename<<std::endl;
     std::ofstream ofs;
     ofs.open(directoryname+filename);
     for(auto i: dict) {
