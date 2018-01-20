@@ -17,8 +17,9 @@ void SPIMI::addFile(std::vector<std::string> f) {
         if(dict.find(i) == dict.end()){
             currentSize += i.size();
         }
-        currentSize += 1;
-        dict[i].insert(docId);
+        if(dict[i].insert(docId).second){
+            currentSize +=1;
+        }
     }
     if (currentSize > maxValue){
         flush("SPIMI"+std::to_string(nextFile)+"_1");
