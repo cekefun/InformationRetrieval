@@ -13,7 +13,7 @@
 
 class SPIMI {
 public:
-    SPIMI(std::string dir = "");
+    SPIMI();
 
     void addFile(std::vector<std::string>);
 
@@ -26,9 +26,8 @@ private:
     unsigned int docId = 0;
     unsigned int nextFile = 1;
     std::map<std::string, std::set<unsigned int >> dict;
-    std::string directoryname;
     // GIVE A BETTER VALUE
-    unsigned int maxValue = 1024*1024; // 1 MB
+    unsigned int maxValue = 1024*1024*250; // 250 MB
 
     void combine(unsigned int, unsigned int, bool);
 
@@ -36,10 +35,11 @@ private:
 
     void flush(std::string);
 
-    bool load(std::string, std::map<std::string, std::set<unsigned int >> &);
-
     unsigned int currentSize;
 
+    std::string directoryName;
+
+    void ParseLine(std::string, std::string&, std::set<uint32_t >&);
 };
 
 #endif //PROJECT_SPIMI_H

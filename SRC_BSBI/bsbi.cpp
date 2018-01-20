@@ -40,7 +40,7 @@ struct TDRecord
   uint32_t docId;
 };
 
-const size_t BLOCK_SIZE = 1024*1024;
+const size_t BLOCK_SIZE = 1024*1024*250;
 const size_t TD_RECORDS_PER_BLOCK = BLOCK_SIZE / sizeof(TDRecord);
 
 std::map<std::string, uint32_t> terms;
@@ -297,7 +297,7 @@ void enableBSBI()
 //  std::cout << "# OF PAIRS PER BLOCK: " << TD_RECORDS_PER_BLOCK << "." << std::endl;
 //  std::cout << "---------" << std::endl;
 
-  directoryName = getDateTime();
+  directoryName = "bsbi";
 #ifdef _WIN32
     CreateDirectory(directoryName.c_str(),NULL);
 

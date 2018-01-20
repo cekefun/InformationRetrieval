@@ -28,12 +28,12 @@ int main(int argc, char* argv[]) {
     bool fSuccess = true;
     while (!feof (fp) && fSuccess && myParser.keepGoing())
     {
-        char* pszBuffer = (char*) myParser .GetBuffer (256); // REQUEST
+        char* pszBuffer = (char*) myParser .GetBuffer (1024); // REQUEST
         if (pszBuffer == NULL)
             fSuccess = false;
         else
         {
-            int nLength = fread (pszBuffer, 1, 256, fp); // READ
+            int nLength = fread (pszBuffer, 1, 1024, fp); // READ
             fSuccess = myParser .ParseBuffer (nLength, nLength == 0); // PARSE
         }
     }
@@ -45,5 +45,4 @@ int main(int argc, char* argv[]) {
     return fSuccess;
 //    sp.finish();
 }
-
 

@@ -10,7 +10,20 @@
 #include <cstring>
 #include <stdlib.h>
 
-SPIMI::SPIMI(std::string dir): directoryname(dir) {}
+#if _WIN32
+#include <windows.h>
+
+#endif
+
+SPIMI::SPIMI() {
+    directoryName ="SPIMI";
+#ifdef _WIN32
+    CreateDirectory(directoryName.c_str(),NULL);
+
+#elif __linux__
+    mkdir(directoryName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#endif
+}
 
 void SPIMI::addFile(std::vector<std::string> f) {
     for(auto& i: f){
@@ -18,7 +31,7 @@ void SPIMI::addFile(std::vector<std::string> f) {
             currentSize += i.size();
         }
         if(dict[i].insert(docId).second){
-            currentSize +=1;
+            currentSize +=4;
         }
     }
     if (currentSize > maxValue){
@@ -30,7 +43,7 @@ void SPIMI::addFile(std::vector<std::string> f) {
 
 void SPIMI::flush(std::string filename) {
     std::ofstream ofs;
-    ofs.open(directoryname+filename);
+    ofs.open(directoryName+"/"+filename);
     for(auto i: dict) {
         // write the string
         ofs << i.first << " ";
@@ -41,39 +54,7 @@ void SPIMI::flush(std::string filename) {
     }
     ofs.close();
     dict.clear();
-}
-
-
-
-bool SPIMI::load(std::string id, std::map<std::string,std::set<unsigned int >>& target) {
-    target.clear();
-
-    std::ifstream ifs;
-    ifs.open(directoryname+id);
-    if (!ifs.is_open()){
-        return false;
-    }
-    std::string s;
-    while (getline(ifs, s)) {
-        std::set<unsigned int > values;
-        std::istringstream f(s);
-        std::string s2;
-        std::string word;
-        unsigned int temp = 0;
-        while (getline(f,s2,' ')){
-            if (temp == 0) {
-                word = s2;
-                temp++;
-            }
-            else {
-                values.insert(std::atoi(s2.data()));
-            }
-        }
-        target[word] = values;
-
-    }
-    ifs.close();
-    return true;
+    currentSize = 0;
 }
 
 void SPIMI::finish() {
@@ -122,60 +103,82 @@ void SPIMI::actual_combine(unsigned int first, unsigned int second, bool nameFir
     }
     unsigned int n1 = 1;
     unsigned int n2 = 1;
-    std::map<std::string,std::set<unsigned int >> dict1;
-    std::map<std::string,std::set<unsigned int >> dict2;
-
-    std::map<std::string,std::set<unsigned int >>::iterator it1;
-    std::map<std::string,std::set<unsigned int >>::iterator it2;
 
     bool succes1 = false;
     bool succes2 = false;
 
+    std::string line1;
+    std::string line2;
+
+    std::string word1;
+    std::set<uint32_t > set1;
+
+    std::string word2;
+    std::set<uint32_t > set2;
+
+    std::ifstream f1;
+    std::ifstream f2;
+
     do{
-        if (it1 == dict1.end()){
+        if (f1.peek() == EOF){
             succes1 = false;
+            remove((directoryName+'/'+filename1+"_"+std::to_string(n1-1)).c_str());
         }
-        if (it2 == dict2.end()){
+        if (f2.peek() == EOF){
             succes2 = false;
+            remove((directoryName+'/'+filename2+"_"+std::to_string(n2-1)).c_str());
         }
         if(!succes1){
-            succes1 = load(filename1+"_"+std::to_string(n1),dict1);
-            remove((filename1+"_"+std::to_string(n1)).data());
-            it1 = dict1.begin();
+            f1.open(directoryName+'/'+filename1+"_"+std::to_string(n1));
+            succes1 = f1.is_open();
+            if (succes1){
+                getline(f1,line1);
+                ParseLine(line1,word1,set1);
+            }
             n1++;
         }
         if(!succes2){
-            succes2 = load(filename2+"_"+std::to_string(n2),dict2);
-            remove((filename2+"_"+std::to_string(n2)).data());
-            it2 = dict2.begin();
+            f2.open(directoryName+'/'+filename2+"_"+std::to_string(n2));
+            succes2 = f2.is_open();
+            if (succes2){
+                getline(f2,line2);
+                ParseLine(line2,word2,set2);
+
+            }
             n2++;
         }
-        while((succes1 and succes2 and it2 != dict2.end() and it1 != dict1.end()) or (!succes1 and it2 != dict2.end()) or (!succes2 and it1 != dict1.end())){
+        while((succes1 and succes2 and f1.peek()!=EOF and f2.peek() != EOF) or (!succes1 and f2.peek() != EOF) or (!succes2 and f1.peek() != EOF)){
             if (!succes2){
-                dict[it1->first] = it1->second;
-                currentSize += it1->first.size() + it1->second.size();
-                it1++;
+                dict[word1] = set1;
+                currentSize += word1.size() + 4*set1.size();
+                getline(f1,line1);
+                ParseLine(line1,word1,set1);
             }else if(!succes1){
-                dict[it2->first] = it2->second;
-                currentSize += it2->first.size() + it2->second.size();
-                it2++;
+                dict[word2] = set2;
+                currentSize += word2.size() + 4*set2.size();
+                getline(f2,line2);
+                ParseLine(line2,word2,set2);
             }
-            else if(it1->first < it2->first){
-                dict[it1->first] = it1->second;
-                currentSize += it1->first.size() + it1->second.size();
-                it1++;
+            else if(word1 < word2){
+                dict[word1] = set1;
+                currentSize += word1.size() + 4*set1.size();
+                getline(f1,line1);
+                ParseLine(line1,word1,set1);
             }
-            else if(it2->first < it1->first){
-                dict[it2->first] = it2->second;
-                currentSize += it2->first.size() + it2->second.size();
-                it2++;
+            else if(word2 < word1){
+                dict[word2] = set2;
+                currentSize += word2.size() + 4*set2.size();
+                getline(f2,line2);
+                ParseLine(line2,word2,set2);
             }
             else{
-                dict[it1->first] = it1->second;
-                dict[it2->first].insert(it2->second.begin(),it2->second.end());
-                currentSize += it1->first.size() + it1->second.size() + it2->second.size();
-                it1++;
-                it2++;
+                dict[word1] = set1;
+                dict[word1].insert(set2.begin(),set2.end());
+                currentSize += word1.size() + 4*set1.size() + 4*set2.size();
+                getline(f1,line1);
+                ParseLine(line1,word1,set1);
+                getline(f2,line2);
+                ParseLine(line2,word2,set2);
             }
 
             if(currentSize> maxValue){
@@ -194,3 +197,18 @@ void SPIMI::actual_combine(unsigned int first, unsigned int second, bool nameFir
     }
 }
 
+void SPIMI::ParseLine(std::string line,std::string& target,std::set<uint32_t >& targetSet) {
+    target.clear();
+    targetSet.clear();
+    std::istringstream f(line);
+    unsigned int temp = 0;
+    std::string token;
+    while (getline(f,token,' ')) {
+        if (temp == 0) {
+            target = token;
+            temp++;
+        } else {
+            targetSet.insert(std::atoi(token.data()));
+        }
+    }
+}

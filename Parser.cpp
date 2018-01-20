@@ -6,7 +6,7 @@
 
 #include "Parser.h"
 
-#include "BSBI/bsbi.h"
+#include "SRC_BSBI/bsbi.h"
 
 #if _WIN32
 #include <windows.h>
