@@ -45,7 +45,9 @@ private:
 
     bool load(std::string, std::map<std::string, std::set<unsigned int >> &);
 
-    unsigned int size();
+    unsigned int currentSize;
+
+
 
 };
 #ifdef __linux__

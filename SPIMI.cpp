@@ -14,9 +14,13 @@ SPIMI::SPIMI(std::string dir): directoryname(dir) {}
 
 void SPIMI::addFile(std::vector<std::string> f) {
     for(auto& i: f){
+        if(dict.find(i) == dict.end()){
+            currentSize += i.size();
+        }
+        currentSize += 1;
         dict[i].insert(docId);
     }
-    if (size() > maxValue){
+    if (currentSize > maxValue){
         flush("SPIMI"+std::to_string(nextFile)+"_1");
         nextFile++;
     }
@@ -149,27 +153,32 @@ void SPIMI::actual_combine(unsigned int first, unsigned int second, bool nameFir
         while((succes1 and succes2 and it2 != dict2.end() and it1 != dict1.end()) or (!succes1 and it2 != dict2.end()) or (!succes2 and it1 != dict1.end())){
             if (!succes2){
                 dict[it1->first] = it1->second;
+                currentSize += it1->first.size() + it1->second.size();
                 it1++;
             }else if(!succes1){
                 dict[it2->first] = it2->second;
+                currentSize += it2->first.size() + it2->second.size();
                 it2++;
             }
             else if(it1->first < it2->first){
                 dict[it1->first] = it1->second;
+                currentSize += it1->first.size() + it1->second.size();
                 it1++;
             }
             else if(it2->first < it1->first){
                 dict[it2->first] = it2->second;
+                currentSize += it2->first.size() + it2->second.size();
                 it2++;
             }
             else{
                 dict[it1->first] = it1->second;
                 dict[it2->first].insert(it2->second.begin(),it2->second.end());
+                currentSize += it1->first.size() + it1->second.size() + it2->second.size();
                 it1++;
                 it2++;
             }
 
-            if(size()> 3*maxValue){
+            if(currentSize> maxValue){
                 flush("SPIMITEMP_" + std::to_string(length));
                 length ++;
             }
@@ -184,35 +193,4 @@ void SPIMI::actual_combine(unsigned int first, unsigned int second, bool nameFir
         std::rename(("SPIMITEMP_"+std::to_string(temp)).data(),(fileResult+"_"+std::to_string(temp)).data());
     }
 }
-unsigned int SPIMI::size() {
-#ifdef _WIN32
-    GetProcessMemoryInfo(GetCurrentProcess(),&pmc,sizeof(pmc));
-    return pmc.WorkingSetSize;
-#elif __linux__
-    FILE* file = fopen("/proc/self/status", "r");
-    int result = -1;
-    char line[128];
 
-    while (fgets(line, 128, file) != NULL){
-        if (strncmp(line, "VmSize:", 7) == 0){
-            result = parseLine(line);
-            break;
-        }
-    }
-    fclose(file);
-    return result;
-#endif
-    return 0;
-}
-
-#ifdef __linux__
-int parseLine(char* line){
-    // This assumes that a digit will be found and the line ends in " Kb".
-    int i = strlen(line);
-    const char* p = line;
-    while (*p <'0' || *p > '9') p++;
-    line[i-3] = '\0';
-    i = atoi(p);
-    return i;
-}
-#endif
